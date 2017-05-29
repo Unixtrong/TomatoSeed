@@ -29,5 +29,6 @@
         android:layout_alignRight="@+id/et_ser_keyword"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
+        android:onClick="onClickSearch"
         android:src="@drawable/ic_search_red_500_36dp"/>
 </RelativeLayout>

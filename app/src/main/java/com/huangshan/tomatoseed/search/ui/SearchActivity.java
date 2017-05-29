@@ -1,11 +1,14 @@
 package com.huangshan.tomatoseed.search.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.huangshan.tomatoseed.R;
+import com.huangshan.tomatoseed.result.ui.ResultActivity;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -24,5 +27,10 @@ public class SearchActivity extends AppCompatActivity {
         mSearchImageView = (ImageView) findViewById(R.id.iv_ser_button);
     }
 
-
+    public void onClickSearch(View view) {
+        String keyword = mKeyEditText.getText().toString();
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("keyword", keyword);
+        startActivity(intent);
+    }
 }
