@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -15,7 +16,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -30,26 +34,57 @@ import static com.huangshan.tomatoseed.utils.Tools.debug;
  * Date: 2017/5/29
  */
 public class RequestHandler {
+    private static final String REGEX_TAG = "https://btso.pw/magnet/detail/hash/";
 
     /**
      * 按照关键字搜索结果
      */
     public static List<SearchResult> searchKeyword(String keyword) {
-        return null;
+        String html = fetchHtml("https://btso.pw/search/" + keyword);
+        return parseSearchResult(html);
     }
 
     /**
      * 根据搜索结果获取详情
      */
     public static SeedDetails getDetails(String url) {
+        String html = fetchHtml(url);
+        Tools.debug("RequestHandler getDetails, html: " + html);
         return null;
     }
 
-    private String fetchHtml(String keyword) {
-        return doGetRequest("https://btso.pw/search" + keyword);
+    private static List<SearchResult> parseSearchResult(String html) {
+        StringReader stringReader = new StringReader(html);
+        BufferedReader bufReader = new BufferedReader(stringReader);
+        try {
+            List<SearchResult> results = new ArrayList<>();
+            String line;
+            while ((line = bufReader.readLine()) != null) {
+                if (line.trim().contains(REGEX_TAG)) {
+                    Pattern pattern = Pattern.compile("href=\"(.+)\".+title=\"(.+)\"");
+                    Matcher matcher = pattern.matcher(html);
+                    while (matcher.find() && matcher.groupCount() == 2) {
+                        results.add(new SearchResult(matcher.group(2), matcher.group(1)));
+                    }
+                }
+            }
+            return results;
+        } catch (IOException e) {
+            Tools.warn(e);
+        } finally {
+            Tools.close(bufReader, stringReader);
+        }
+        return null;
     }
 
-    private String doGetRequest(String urlAddress) {
+    private static String fetchHtml(String url) {
+        return doGetRequest(url);
+    }
+
+    private static String doGetRequest(String urlAddress) {
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
         try {
             URL url = new URL(urlAddress);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -59,17 +94,25 @@ public class RequestHandler {
             int responseCode = urlConnection.getResponseCode();
             debug("code: " + responseCode);
             if (responseCode == 200) {
-                InputStream inputStream = urlConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                // TODO: 2017/5/29 return String result
+                inputStream = urlConnection.getInputStream();
+                inputStreamReader = new InputStreamReader(inputStream);
+                bufferedReader = new BufferedReader(inputStreamReader);
+                String line;
+                String result = null;
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line + "\n";
+                }
+                return result;
             }
         } catch (IOException e) {
             Tools.warn(e);
+        } finally {
+            Tools.close(bufferedReader, inputStreamReader, inputStream);
         }
         return null;
     }
 
-    private void checkHttps(HttpURLConnection urlConnection) {
+    private static void checkHttps(HttpURLConnection urlConnection) {
         if (urlConnection instanceof HttpsURLConnection) {
             SSLContext sslContext = getSslContext();
             if (sslContext == null) {
@@ -80,7 +123,7 @@ public class RequestHandler {
         }
     }
 
-    private SSLContext getSslContext() {
+    private static SSLContext getSslContext() {
         try {
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, new TrustManager[]{new X509()}, new SecureRandom());
@@ -91,7 +134,7 @@ public class RequestHandler {
         }
     }
 
-    private class X509 implements X509TrustManager {
+    private static class X509 implements X509TrustManager {
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {

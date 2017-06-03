@@ -8,6 +8,11 @@ public class SearchResult {
     private String mName;
     private String mUrl;
 
+    public SearchResult(String name, String url) {
+        mName = name;
+        mUrl = url;
+    }
+
     public String getName() {
         return mName;
     }
@@ -24,5 +29,13 @@ public class SearchResult {
     public SearchResult setUrl(String url) {
         mUrl = url;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "mName='" + mName + '\'' +
+                ", mUrl='" + mUrl + '\'' +
+                '}';
     }
 }
