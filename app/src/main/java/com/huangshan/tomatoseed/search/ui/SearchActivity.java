@@ -8,13 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.huangshan.tomatoseed.R;
-import com.huangshan.tomatoseed.bean.SearchResult;
-import com.huangshan.tomatoseed.bean.SeedDetails;
-import com.huangshan.tomatoseed.handler.RequestHandler;
 import com.huangshan.tomatoseed.result.ui.ResultActivity;
-import com.huangshan.tomatoseed.utils.Tools;
-
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -38,17 +32,5 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("keyword", keyword);
         startActivity(intent);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<SearchResult> results = RequestHandler.searchKeyword(keyword);
-                for (SearchResult result : results) {
-                    Tools.debug("Search result: " + result);
-                }
-                SeedDetails details = RequestHandler.getDetails(results.get(0).getUrl());
-                Tools.debug("Search details: " + details);
-            }
-        }).start();
     }
 }
