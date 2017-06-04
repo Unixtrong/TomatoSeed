@@ -1,32 +1,27 @@
 package com.huangshan.tomatoseed.result.ui;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.huangshan.tomatoseed.Adapter.ResultAdapter;
 import com.huangshan.tomatoseed.R;
 import com.huangshan.tomatoseed.bean.SearchResult;
-import com.huangshan.tomatoseed.bean.SeedDetails;
 import com.huangshan.tomatoseed.details.ui.DetailsActivity;
 import com.huangshan.tomatoseed.handler.RequestHandler;
 import com.huangshan.tomatoseed.search.ui.SearchActivity;
 import com.huangshan.tomatoseed.utils.Tools;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
 
-    private List mlist;
+    private List mlist; // 这个命名不标准
     private List<SearchResult> mDataList;
     private ListView mListView;
 
@@ -55,21 +50,6 @@ public class ResultActivity extends AppCompatActivity {
         ResultAdapter arrayAdapter = new ResultAdapter(this, mDataList);
         mListView.setAdapter(arrayAdapter);
         mListView.setOnItemClickListener(new OnItemClickListener());
-    }
-
-    //listview点击事件的监听器
-    class OnItemClickListener implements AdapterView.OnItemClickListener {
-        @Override
-        //侦测点击了第几行
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            SearchResult searchresult = (SearchResult) adapterView.getItemAtPosition(position);
-            String url = searchresult.getUrl();
-
-            Intent next = new Intent();
-            next.putExtra("URL", url);
-            next.setClass(ResultActivity.this, DetailsActivity.class);
-            startActivity(next);
-        }
     }
 
     //返回上一页
@@ -113,6 +93,27 @@ public class ResultActivity extends AppCompatActivity {
         }.execute();
     }
 
+    // 这个方法未使用 by Adan
+    private void sleepData(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    //listview点击事件的监听器
+    class OnItemClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        //侦测点击了第几行
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            SearchResult searchresult = (SearchResult) adapterView.getItemAtPosition(position);
+            String url = searchresult.getUrl();
 
+            Intent next = new Intent();
+            next.putExtra("URL", url);
+            next.setClass(ResultActivity.this, DetailsActivity.class);
+            startActivity(next);
+        }
+    }
 }
