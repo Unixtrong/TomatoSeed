@@ -8,11 +8,22 @@
     android:padding="20dp"
     tools:context="com.huangshan.tomatoseed.search.ui.SearchActivity">
 
+    <ImageView
+        android:id="@+id/iv_ser_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:onClick="onClickSearch"
+        android:src="@drawable/ic_search_white_36dp"/>
+
     <EditText
         android:id="@+id/et_ser_keyword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/iv_ser_button"
         android:background="@drawable/bg_search_bar"
         android:elevation="11dp"
         android:gravity="center"
@@ -22,13 +33,4 @@
         android:text="ABC"
         android:textSize="30sp"/>
 
-    <ImageView
-        android:id="@+id/iv_ser_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/et_ser_keyword"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:onClick="onClickSearch"
-        android:src="@drawable/ic_search_red_500_36dp"/>
 </RelativeLayout>
