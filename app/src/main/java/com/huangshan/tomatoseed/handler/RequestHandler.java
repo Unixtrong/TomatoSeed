@@ -50,6 +50,10 @@ public class RequestHandler {
     public static SeedDetails getDetails(String url) {
         String html = fetchHtml(url);
         Tools.debug("RequestHandler getDetails, html: " + html);
+        return parseSeedDetails(html);
+    }
+
+    private static SeedDetails parseSeedDetails(String html) {
         return null;
     }
 

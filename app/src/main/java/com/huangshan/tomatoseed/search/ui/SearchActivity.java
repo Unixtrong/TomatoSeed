@@ -1,5 +1,6 @@
 package com.huangshan.tomatoseed.search.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -7,11 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.huangshan.tomatoseed.R;
-import com.huangshan.tomatoseed.bean.SearchResult;
-import com.huangshan.tomatoseed.handler.RequestHandler;
-import com.huangshan.tomatoseed.utils.Tools;
-
-import java.util.List;
+import com.huangshan.tomatoseed.result.ui.ResultActivity;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -32,19 +29,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void onClickSearch(View view) {
         final String keyword = mKeyEditText.getText().toString();
-//        Intent intent = new Intent(this, ResultActivity.class);
-//        intent.putExtra("keyword", keyword);
-//        startActivity(intent);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<SearchResult> results = RequestHandler.searchKeyword(keyword);
-                for (SearchResult result : results) {
-                    Tools.debug("Search result: " + result);
-                }
-                RequestHandler.getDetails(results.get(0).getUrl());
-            }
-        }).start();
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("keyword", keyword);
+        startActivity(intent);
     }
 }

@@ -1,6 +1,8 @@
 package com.huangshan.tomatoseed.bean;
 
-import java.util.Map;
+import android.util.Pair;
+
+import java.util.List;
 
 /**
  * Author(s): danyun
@@ -9,7 +11,7 @@ import java.util.Map;
 public class SeedDetails {
     private String mName;
     private String mMagnet;
-    private Map<String, String> mSeedFiles;
+    private List<Pair<String, String>> mSeedFiles;
 
     public String getName() {
         return mName;
@@ -29,11 +31,11 @@ public class SeedDetails {
         return this;
     }
 
-    public Map<String, String> getSeedFiles() {
+    public List<Pair<String, String>> getSeedFiles() {
         return mSeedFiles;
     }
 
-    public SeedDetails setSeedFiles(Map<String, String> seedFiles) {
+    public SeedDetails setSeedFiles(List<Pair<String, String>> seedFiles) {
         mSeedFiles = seedFiles;
         return this;
     }
