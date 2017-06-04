@@ -39,7 +39,7 @@ public class RequestHandler {
     private static final String REGEX_TAG_SEARCH_RESULT = "https://btso.pw/magnet/detail/hash/";
     private static final String REGEX_TAG_DETAILS_TITLE = " torrent, magnet, bt - BTSOW</title>";
     private static final String REGEX_TAG_DETAILS_MAGNET = " readonly>magnet:";
-    private static final String REGEX_TAG_DETAILS_FILES = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_DETAILS_FILE_NAME = "<div class=\"col-xs-8 col-sm-10 col-lg-11 file\">";
 
     /**
      * 按照关键字搜索结果
@@ -69,16 +69,23 @@ public class RequestHandler {
                 line = line.trim();
                 if (line.endsWith(REGEX_TAG_DETAILS_TITLE)) {
                     Pattern pattern = Pattern.compile("<title>(.+)" + REGEX_TAG_DETAILS_TITLE);
-                    Matcher matcher = pattern.matcher(html);
+                    Matcher matcher = pattern.matcher(line);
                     if (matcher.find() && matcher.groupCount() == 1) {
                         seedDetails.setName(matcher.group(1));
                     }
                 }
                 if (line.contains(REGEX_TAG_DETAILS_MAGNET)) {
                     Pattern pattern = Pattern.compile("readonly>(magnet.+)</textarea>");
-                    Matcher matcher = pattern.matcher(html);
+                    Matcher matcher = pattern.matcher(line);
                     if (matcher.find() && matcher.groupCount() == 1) {
                         seedDetails.setMagnet(matcher.group(1));
+                    }
+                }
+                if (line.contains(REGEX_TAG_DETAILS_FILE_NAME)) {
+                    Pattern pattern = Pattern.compile("glyphicon.+</span>(.+\\.\\w+)</div><div.+>(.+)</div>");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find() && matcher.groupCount() == 2) {
+                        files.add(new Pair<>(matcher.group(1), matcher.group(2)));
                     }
                 }
             }
@@ -100,7 +107,7 @@ public class RequestHandler {
             while ((line = bufReader.readLine()) != null) {
                 if (line.trim().contains(REGEX_TAG_SEARCH_RESULT)) {
                     Pattern pattern = Pattern.compile("href=\"(.+)\".+title=\"(.+)\"");
-                    Matcher matcher = pattern.matcher(html);
+                    Matcher matcher = pattern.matcher(line);
                     while (matcher.find() && matcher.groupCount() == 2) {
                         results.add(new SearchResult(matcher.group(2), matcher.group(1)));
                     }
