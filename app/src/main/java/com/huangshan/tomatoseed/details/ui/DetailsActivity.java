@@ -3,6 +3,7 @@ package com.huangshan.tomatoseed.details.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
@@ -25,18 +26,19 @@ public class DetailsActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private String mName;
     private String mMagnet;
-    private List<> mList;
+    private List<Pair<String,String>> mList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         initView();
         initData();
+        popupProgressDialog();
     }
 
     private void initData() {
         Intent resultIntent = new Intent();
-        result = resultIntent.getStringExtra();
+        result = resultIntent.getStringExtra("resultIntent");
     }
 
     private void initView() {
@@ -49,7 +51,7 @@ public class DetailsActivity extends AppCompatActivity {
         dialog.setMessage("请稍等");
     }
 
-    public void popupProgressDialog(View view){
+    public void popupProgressDialog(){
         new AsyncTask<String,String,String>() {
             @Override
             protected void onPreExecute() {
@@ -63,9 +65,9 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 dialog.dismiss();
-                mTvName.setText();
-                mTvAdress.setText();
-                mAdapter = new TomatoSeed_details_adapter(DetailsActivity.this);
+                mTvName.setText(mName);
+                mTvAdress.setText(mMagnet);
+                mAdapter = new TomatoSeed_details_adapter(DetailsActivity.this,mList);
                 mLv.setAdapter(mAdapter);
             }
         }.execute();
@@ -76,6 +78,6 @@ public class DetailsActivity extends AppCompatActivity {
         mName = seedDetails.getName();
         mMagnet = seedDetails.getMagnet();
         mList= seedDetails.getSeedFiles();
-        return null;
+        return result;
     }
 }
