@@ -7,11 +7,14 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.huangshan.tomatoseed.R;
 import com.huangshan.tomatoseed.bean.SeedDetails;
 import com.huangshan.tomatoseed.handler.RequestHandler;
+import com.huangshan.tomatoseed.utils.Tools;
 
 import java.util.List;
 
@@ -22,9 +25,10 @@ public class DetailsActivity extends AppCompatActivity {
     private TomatoSeedDetailsAdapter mAdapter;
     private String result;
     private ProgressDialog dialog;
-    private String mName;
-    private String mMagnet;
-    private List<Pair<String,String>> mList;
+    private SeedDetails seedDetails;
+    private int mProgress = 98;
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        Intent resultIntent = new Intent();
+        Intent resultIntent = getIntent();
         result = resultIntent.getStringExtra("URL");
     }
 
@@ -50,32 +54,44 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void popupProgressDialog(){
-        new AsyncTask<String,String,String>() {
+        new AsyncTask<String,Integer,SeedDetails>() {
             @Override
             protected void onPreExecute() {
                 dialog.show();
             }
             @Override
-            protected String doInBackground(String[] params) {
-                downloadData();
-                return result;
+            protected SeedDetails doInBackground(String [] params) {
+                while (mProgress<100){
+                    mProgress++;
+                    publishProgress(mProgress);
+                }
+               return downloadData();
             }
+
             @Override
-            protected void onPostExecute(String s) {
+            protected void onProgressUpdate(Integer... values) {
+                mProgressBar.setProgress(values[0]);
+                mProgressBar.setSecondaryProgress(values[0]*2);
+            }
+
+            @Override
+            protected void onPostExecute(SeedDetails s) {
                 dialog.dismiss();
-                mTvName.setText(mName);
-                mTvAdress.setText(mMagnet);
-                mAdapter = new TomatoSeedDetailsAdapter(DetailsActivity.this,mList);
+                mTvName.setText(seedDetails.getName());
+                mTvAdress.setText(seedDetails.getMagnet());
+                mAdapter = new TomatoSeedDetailsAdapter(DetailsActivity.this,seedDetails.getSeedFiles());
                 mLv.setAdapter(mAdapter);
             }
         }.execute();
     }
 
-    private String downloadData() {
-        SeedDetails seedDetails = RequestHandler.getDetails(result);
-        mName = seedDetails.getName();
-        mMagnet = seedDetails.getMagnet();
-        mList= seedDetails.getSeedFiles();
-        return result;
+    private SeedDetails downloadData() {
+        seedDetails = RequestHandler.getDetails(result);
+        if (seedDetails==null){
+            Toast.makeText(this,"未找到",Toast.LENGTH_SHORT).show();
+            return null;
+        }else {
+            return seedDetails;
+        }
     }
 }

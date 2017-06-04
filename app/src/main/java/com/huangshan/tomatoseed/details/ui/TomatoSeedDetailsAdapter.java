@@ -46,7 +46,6 @@ public class TomatoSeedDetailsAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        mInflater = LayoutInflater.from(mContext);
         Holder holder ;
         if (convertView==null){
             convertView = mInflater.inflate(R.layout.tomatoseed_details_adapter,parent,false);
