@@ -40,4 +40,13 @@ public class SeedDetails {
         mSeedFiles = seedFiles;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "SeedDetails{" +
+                "mName='" + mName + '\'' +
+                ", mMagnet='" + mMagnet + '\'' +
+                ", mSeedFiles=" + mSeedFiles +
+                '}';
+    }
 }

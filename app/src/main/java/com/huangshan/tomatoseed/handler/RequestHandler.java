@@ -1,5 +1,7 @@
 package com.huangshan.tomatoseed.handler;
 
+import android.support.v4.util.Pair;
+
 import com.huangshan.tomatoseed.bean.SearchResult;
 import com.huangshan.tomatoseed.bean.SeedDetails;
 import com.huangshan.tomatoseed.utils.Tools;
@@ -35,8 +37,8 @@ import static com.huangshan.tomatoseed.utils.Tools.debug;
  */
 public class RequestHandler {
     private static final String REGEX_TAG_SEARCH_RESULT = "https://btso.pw/magnet/detail/hash/";
-    private static final String REGEX_TAG_DETAILS_TITLE = "https://btso.pw/magnet/detail/hash/";
-    private static final String REGEX_TAG_DETAILS_MAGNET = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_DETAILS_TITLE = " torrent, magnet, bt - BTSOW</title>";
+    private static final String REGEX_TAG_DETAILS_MAGNET = " readonly>magnet:";
     private static final String REGEX_TAG_DETAILS_FILES = "https://btso.pw/magnet/detail/hash/";
 
     /**
@@ -60,18 +62,27 @@ public class RequestHandler {
         StringReader stringReader = new StringReader(html);
         BufferedReader bufReader = new BufferedReader(stringReader);
         try {
-            List<SearchResult> results = new ArrayList<>();
+            SeedDetails seedDetails = new SeedDetails();
+            List<Pair<String, String>> files = new ArrayList<>();
             String line;
             while ((line = bufReader.readLine()) != null) {
-                if (line.trim().contains(REGEX_TAG_SEARCH_RESULT)) {
-                    Pattern pattern = Pattern.compile("href=\"(.+)\".+title=\"(.+)\"");
+                line = line.trim();
+                if (line.endsWith(REGEX_TAG_DETAILS_TITLE)) {
+                    Pattern pattern = Pattern.compile("<title>(.+)" + REGEX_TAG_DETAILS_TITLE);
                     Matcher matcher = pattern.matcher(html);
-                    while (matcher.find() && matcher.groupCount() == 2) {
-                        results.add(new SearchResult(matcher.group(2), matcher.group(1)));
+                    if (matcher.find() && matcher.groupCount() == 1) {
+                        seedDetails.setName(matcher.group(1));
+                    }
+                }
+                if (line.contains(REGEX_TAG_DETAILS_MAGNET)) {
+                    Pattern pattern = Pattern.compile("readonly>(magnet.+)</textarea>");
+                    Matcher matcher = pattern.matcher(html);
+                    if (matcher.find() && matcher.groupCount() == 1) {
+                        seedDetails.setMagnet(matcher.group(1));
                     }
                 }
             }
-            return null;
+            return seedDetails.setSeedFiles(files);
         } catch (IOException e) {
             Tools.warn(e);
         } finally {
