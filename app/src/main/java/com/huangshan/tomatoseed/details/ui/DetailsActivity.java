@@ -6,8 +6,6 @@ import android.os.AsyncTask;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telecom.Call;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +19,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView mTvName;
     private TextView mTvAdress;
     private ListView mLv;
-    private TomatoSeed_details_adapter mAdapter;
+    private TomatoSeedDetailsAdapter mAdapter;
     private String result;
     private ProgressDialog dialog;
     private String mName;
@@ -67,7 +65,7 @@ public class DetailsActivity extends AppCompatActivity {
                 dialog.dismiss();
                 mTvName.setText(mName);
                 mTvAdress.setText(mMagnet);
-                mAdapter = new TomatoSeed_details_adapter(DetailsActivity.this,mList);
+                mAdapter = new TomatoSeedDetailsAdapter(DetailsActivity.this,mList);
                 mLv.setAdapter(mAdapter);
             }
         }.execute();

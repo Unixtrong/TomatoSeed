@@ -18,12 +18,12 @@ import java.util.List;
  * Created by aloong on 2017/5/30.
  */
 
-public class TomatoSeed_details_adapter extends BaseAdapter{
+public class TomatoSeedDetailsAdapter extends BaseAdapter{
     private Context mContext;
     private List<Pair<String,String>> mList;
     private LayoutInflater mInflater;
 
-    public TomatoSeed_details_adapter(Context context, List<Pair<String,String>> list) {
+    public TomatoSeedDetailsAdapter(Context context, List<Pair<String,String>> list) {
         this.mContext = context;
         this.mList = list;
         mInflater = LayoutInflater.from(context);
