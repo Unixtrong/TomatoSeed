@@ -36,7 +36,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void initData() {
         Intent resultIntent = new Intent();
-        result = resultIntent.getStringExtra("resultIntent");
+        result = resultIntent.getStringExtra("URL");
     }
 
     private void initView() {
