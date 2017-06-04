@@ -37,7 +37,8 @@ public class ResultActivity extends AppCompatActivity {
 
         mListView = (ListView) findViewById(R.id.res_lv);
 
-        showDate();
+        popupProgressDialog();
+
     }
 
 
@@ -47,16 +48,7 @@ public class ResultActivity extends AppCompatActivity {
         String keyword = intent.getStringExtra("keyword");
         return keyword;
     }
-
-//    //根据关键词请求服务器，返回List
-//    public List<SearchResult> prepareData(String keyword) {
-//        mDataList = RequestHandler.searchKeyword(keyword);
-//        if (mDataList == null) {
-//            Tools.toastMessage(this, "资源未找到！");
-//            returnLastpage();
-//        }
-//        return mDataList;
-//    }
+    
 
     //利用得到的mlist，绑定adapter，展示listview
     public void showDate() {
@@ -88,7 +80,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     //开始请求网络后弹出进度条
-    public void popupProgressDialog(View view) {
+    public void popupProgressDialog() {
 
         new AsyncTask<String, Void, String>() {
             ProgressDialog dialog;                               //弹窗进度条
@@ -112,24 +104,15 @@ public class ResultActivity extends AppCompatActivity {
                 return null;
             }
 
-//            @Override
-//            protected void onProgressUpdate(Void... values) {
-//                super.onProgressUpdate(values);
-//            }
 
             @Override
             protected void onPostExecute(String s) {
-                dialog.dismiss();           //消失
+                dialog.dismiss();
+                showDate();
             }
         }.execute();
     }
 
 
-    private void sleepData(int time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
