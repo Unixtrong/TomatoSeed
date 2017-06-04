@@ -48,19 +48,19 @@ public class ResultActivity extends AppCompatActivity {
         return keyword;
     }
 
-    //根据关键词请求服务器，返回List
-    public List prepareData(String keyword) {
-        mDataList = RequestHandler.searchKeyword(keyword);
-        if (mDataList == null) {
-            Tools.toastMessage(this, "资源未找到！");
-            returnLastpage();
-        }
-        return mDataList;
-    }
+//    //根据关键词请求服务器，返回List
+//    public List<SearchResult> prepareData(String keyword) {
+//        mDataList = RequestHandler.searchKeyword(keyword);
+//        if (mDataList == null) {
+//            Tools.toastMessage(this, "资源未找到！");
+//            returnLastpage();
+//        }
+//        return mDataList;
+//    }
 
     //利用得到的mlist，绑定adapter，展示listview
     public void showDate() {
-        ResultAdapter arrayAdapter = new ResultAdapter(this, prepareData(getKeyword()));
+        ResultAdapter arrayAdapter = new ResultAdapter(this, mDataList);
         mListView.setAdapter(arrayAdapter);
         mListView.setOnItemClickListener(new OnItemClickListener());
     }
@@ -104,27 +104,18 @@ public class ResultActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(String... params) {
-                int mdialogmessage = 0;
-
+                mDataList = RequestHandler.searchKeyword(getKeyword());
                 if (mDataList == null) {
-                    while (mdialogmessage < 10000) {
-                        sleepData(1);
-                        mdialogmessage++;
-                        returnLastpage();
-                        Tools.toastMessage(ResultActivity.this, "请求超时！请重新搜索");
-
-                    }
-                    if (mDataList != null) {
-                        dialog.dismiss();
-                    }
+                    Tools.toastMessage(ResultActivity.this, "资源未找到！");
+                    returnLastpage();
                 }
                 return null;
             }
 
-            @Override
-            protected void onProgressUpdate(Void... values) {
-                super.onProgressUpdate(values);
-            }
+//            @Override
+//            protected void onProgressUpdate(Void... values) {
+//                super.onProgressUpdate(values);
+//            }
 
             @Override
             protected void onPostExecute(String s) {
