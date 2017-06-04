@@ -1,6 +1,7 @@
 package com.huangshan.tomatoseed.bean;
 
-import android.util.Pair;
+
+import android.support.v4.util.Pair;
 
 import java.util.List;
 

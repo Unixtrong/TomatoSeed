@@ -34,7 +34,10 @@ import static com.huangshan.tomatoseed.utils.Tools.debug;
  * Date: 2017/5/29
  */
 public class RequestHandler {
-    private static final String REGEX_TAG = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_SEARCH_RESULT = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_DETAILS_TITLE = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_DETAILS_MAGNET = "https://btso.pw/magnet/detail/hash/";
+    private static final String REGEX_TAG_DETAILS_FILES = "https://btso.pw/magnet/detail/hash/";
 
     /**
      * 按照关键字搜索结果
@@ -54,6 +57,26 @@ public class RequestHandler {
     }
 
     private static SeedDetails parseSeedDetails(String html) {
+        StringReader stringReader = new StringReader(html);
+        BufferedReader bufReader = new BufferedReader(stringReader);
+        try {
+            List<SearchResult> results = new ArrayList<>();
+            String line;
+            while ((line = bufReader.readLine()) != null) {
+                if (line.trim().contains(REGEX_TAG_SEARCH_RESULT)) {
+                    Pattern pattern = Pattern.compile("href=\"(.+)\".+title=\"(.+)\"");
+                    Matcher matcher = pattern.matcher(html);
+                    while (matcher.find() && matcher.groupCount() == 2) {
+                        results.add(new SearchResult(matcher.group(2), matcher.group(1)));
+                    }
+                }
+            }
+            return null;
+        } catch (IOException e) {
+            Tools.warn(e);
+        } finally {
+            Tools.close(bufReader, stringReader);
+        }
         return null;
     }
 
@@ -64,7 +87,7 @@ public class RequestHandler {
             List<SearchResult> results = new ArrayList<>();
             String line;
             while ((line = bufReader.readLine()) != null) {
-                if (line.trim().contains(REGEX_TAG)) {
+                if (line.trim().contains(REGEX_TAG_SEARCH_RESULT)) {
                     Pattern pattern = Pattern.compile("href=\"(.+)\".+title=\"(.+)\"");
                     Matcher matcher = pattern.matcher(html);
                     while (matcher.find() && matcher.groupCount() == 2) {
