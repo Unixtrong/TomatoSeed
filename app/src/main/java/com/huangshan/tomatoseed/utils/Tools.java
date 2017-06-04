@@ -1,6 +1,8 @@
 package com.huangshan.tomatoseed.utils;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -45,4 +47,10 @@ public class Tools {
             }
         }
     }
+
+    public static void toastMessage(Context context,String message){
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    }
+
 }
